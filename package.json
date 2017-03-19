@@ -1,0 +1,17 @@
+{
+  "name": "cos-api4node",
+  "version": "1.0.0",
+  "description": "Atelier REST API wrapper",
+  "main": "api.js",
+  "scripts": {
+    "test": "tape ./test/*.js"
+  },
+  "keywords": [
+    "atelier"
+  ],
+  "author": "doublefint@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "tape": "^4.6.3"
+  }
+}
