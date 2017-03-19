@@ -1,6 +1,6 @@
 {
   "name": "cos-api4node",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Atelier REST API wrapper",
   "repository" : { "type": "git" , "url" : "https://github.com/doublefint/cos-api4node.git" },
   "main": "api.js",
