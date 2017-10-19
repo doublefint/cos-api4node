@@ -104,6 +104,8 @@ module.exports = ( conn ) => {
 
     const compile = ( docNames, cb ) => {
 
+        if (typeof docNames === 'string')
+            docNames = [ docNames ];
         if (!(docNames instanceof Array))
             throw new Error(`Document names must be an array (${ docNames })`);
 
@@ -127,6 +129,8 @@ module.exports = ( conn ) => {
 
     const deleteDocs = ( docNames, cb ) => {
 
+        if (typeof docNames === 'string')
+            docNames = [ docNames ];
         if (!(docNames instanceof Array))
             throw new Error(`Document names must be an array (${ docNames })`);
 

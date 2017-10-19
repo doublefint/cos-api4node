@@ -37,10 +37,10 @@ api.getServer((error, server) => {
 Supported API
 -------------
 
-+ [compile](http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GSCF_ref#GSCF_ref_compile)`(list, [callback])`
-   + Compile all docs listed in the given array `list` (for example, `["My.Class.cls", "Program.mac", ...]`).
-+ [deleteDocs](http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GSCF_ref#GSCF_ref_deletedocs)`(list, [callback])`
-   + Delete all docs listed in the given array `list` (for example, `["My.Class.cls", "Program.mac", ...]`).
++ [compile](http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GSCF_ref#GSCF_ref_compile)`(docs, [callback])`
+   + Compile all docs listed in the given array `docs` (for example, `["My.Class.cls", "Program.mac", ...]`). `docs` also can be a single string meaning one document to compile.
++ [deleteDocs](http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GSCF_ref#GSCF_ref_deletedocs)`(docs, [callback])`
+   + Delete all docs listed in the given array `docs` (for example, `["My.Class.cls", "Program.mac", ...]`). `docs` also can be a single string meaning one document to delete.
 + [getServer](http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GSCF_ref#GSCF_ref_headserver)`(callback)`
    + Returns information about the server, including Caché Source Code File REST API version and namespaces that are available on the server.
 + [getDoc](http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GSCF_ref#GSCF_ref_getdoc)`(doc, callback)`
