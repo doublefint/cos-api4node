@@ -1,14 +1,20 @@
 {
   "name": "cos-api4node",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Atelier REST API wrapper",
-  "repository" : { "type": "git" , "url" : "https://github.com/doublefint/cos-api4node.git" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/doublefint/cos-api4node.git"
+  },
   "main": "api.js",
   "scripts": {
     "test": "tape ./test/*.js"
   },
   "keywords": [
-    "atelier"
+    "intersystems",
+    "atelier",
+    "cache",
+    "api"
   ],
   "author": "doublefint@gmail.com",
   "license": "MIT",
