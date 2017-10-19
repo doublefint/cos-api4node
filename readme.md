@@ -54,3 +54,17 @@ Supported API
    + Creates or updates document `name` with data `doc`. Returns the updated document. See official [docs](http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GSCF_ref#GSCF_ref_putdoc) for more info. The following optional `options` can be specified:
       + `options['If-None-Match']` Specifies the version (`ts`) of the document to overwrite if the document already exists. If the given timestamp (`ts`) does not match server's one, the `409 Conflict` will occur. You can bypass this check with `ignoreConflict` option.
       + `options['ignoreConflict']` Forces the source code file to be written to the server even if the file has changed since you previously accessed it.
+
+Development
+-----------
+
+After making any changes, run the tests:
+
+```bash
+npm test
+```
+
+License
+-------
+
+[MIT](license)
