@@ -1,6 +1,6 @@
 {
   "name": "cos-api4node",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Atelier REST API wrapper",
   "repository": {
     "type": "git",

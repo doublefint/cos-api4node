@@ -10,7 +10,7 @@ module.exports = ( conn ) => {
         'Authorization': 'Basic ' + new Buffer( username + ':' + password ).toString( 'base64' )
     }
     
-    const ok = ( res ) => res.statusCode == '200' 
+    const ok = ( res ) => res.statusCode == '200' || res.statusCode == '201'
     
     // factory 
     const OnResp = ( cb ) => ( res ) => {
