@@ -8,11 +8,9 @@ test( 'compile', assert => {
     const api = API( samples )
     const doc = 'HoleFoods.Country.cls'
 
-    api.compile( doc, ( err, data ) => {
+    api.compile( doc, ( err, json ) => {
 
         assert.ok( !err, 'response code' )
-
-        const json = JSON.parse( data )
 
         assert.true( json.console.length, 'has lines' )
         assert.true( json.result.content instanceof Array, 'has content' )

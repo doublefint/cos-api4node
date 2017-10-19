@@ -14,14 +14,25 @@ module.exports = ( conn ) => {
     
     // factory 
     const OnResp = ( cb ) => ( res ) => {
+
         var data = ''
         res.on( 'data', chunk => { data += chunk } ) //collect data
         res.on( 'end', () => {
+
+            let parsed;
+            if (data) try {
+                parsed = JSON.parse(data)
+            } catch (e) {
+                parsed = data;
+            }
+
             if ( !ok(res) )
-                return cb({ code: res.statusCode, message: res.statusMessage }, data)
-            // todo: in next major version, decode data and check for any status.errors here
-            cb( null, data )
+                return cb( { code: res.statusCode, message: res.statusMessage }, parsed )
+
+            cb( null, parsed )
+
         } )
+
     }
 
     

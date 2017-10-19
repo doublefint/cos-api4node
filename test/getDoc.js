@@ -8,11 +8,10 @@ test( 'getDoc', assert => {
     const api = API( samples )
     const doc = 'HoleFoods.Country.cls'
 
-    api.getDoc( doc, ( err, data ) => {
+    api.getDoc( doc, ( err, json ) => {
         
         assert.ok( !err, 'response code' )
-        
-        const json = JSON.parse( data )
+
         const lines = json.result.content
         
         assert.true( lines.length, 'has lines' )
