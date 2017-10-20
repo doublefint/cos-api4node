@@ -6,7 +6,7 @@ test( 'getServer', assert => {
     
     const api = API( conn )
     
-    api.getServer( ( err, data ) => {
+    api.getServer( ( err ) => {
         assert.false( !!err, 'default connection' )
         assert.end()
     })
