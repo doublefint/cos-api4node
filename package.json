@@ -1,6 +1,6 @@
 {
   "name": "cos-api4node",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Atelier REST API wrapper",
   "repository": {
     "type": "git",
@@ -14,6 +14,7 @@
     "intersystems",
     "atelier",
     "cache",
+    "rest",
     "api"
   ],
   "author": "doublefint@gmail.com",

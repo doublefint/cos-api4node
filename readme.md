@@ -25,7 +25,8 @@ const api = api4node({
     version: 'v1', 
     ns: 'USER', 
     username: '_SYSTEM',
-    password: 'SYS'
+    password: 'SYS',
+    https: false
 });
 
 // Get info about server
