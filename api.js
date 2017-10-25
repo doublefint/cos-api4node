@@ -1,17 +1,19 @@
 /** Atelier REST API wrapper 
 * http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GSCF_ref#GSCF_C29114
 */ 
-const http = require('http')
+const httpModule = require('http')
+const httpsModule = require('https')
 
 module.exports = ( conn ) => {
 
-    const { host, port, username, password, path, version, ns } = conn
+    const { host, port, username, password, path, version, ns, https } = conn
     const headers = {
         'Authorization': 'Basic ' + new Buffer( username + ':' + password ).toString( 'base64' )
     }
     
     const ok = ( res ) => res.statusCode == '200' || res.statusCode == '201'
-    
+    const http = https ? httpsModule : httpModule
+
     // factory 
     const OnResp = ( cb ) => ( res ) => {
 
