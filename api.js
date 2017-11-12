@@ -101,7 +101,7 @@ module.exports = ( conn ) => {
                 headers,
                 {
                     'Content-Type': 'application/json',
-                    'Content-Length': body.length
+                    'Content-Length': Buffer.byteLength(body, "utf8")
                 },
                 params['If-None-Match'] ? { 'If-None-Match': params['If-None-Match'] } : undefined
             ),
@@ -128,7 +128,7 @@ module.exports = ( conn ) => {
             method: 'POST',
             headers: Object.assign(headers, {
                 'Content-Type': 'application/json',
-                'Content-Length': body.length
+                'Content-Length': Buffer.byteLength(body, "utf8")
             }),
             host, port,
             path: url
@@ -153,7 +153,7 @@ module.exports = ( conn ) => {
             method: 'DELETE',
             headers: Object.assign(headers, {
                 'Content-Type': 'application/json',
-                'Content-Length': body.length
+                'Content-Length': Buffer.byteLength(body, "utf8")
             }),
             host, port,
             path: url
