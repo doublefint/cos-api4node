@@ -1,3 +1,5 @@
+[![Known Vulnerabilities](https://snyk.io/test/github/doublefint/cos-api4node/badge.svg)](https://snyk.io/test/github/doublefint/cos-api4node)
+
 # cos-api4node
 
 [InterSystems](https://www.intersystems.com/) [Atelier REST API](http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GSCF_ref#GSCF_C29114)
