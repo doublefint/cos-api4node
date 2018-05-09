@@ -7,74 +7,76 @@ const httpsModule = require('https')
 module.exports = ( conn ) => {
 
     const { host, port, username, password, path, version, ns, https } = conn
-    const headers = {
-        'Authorization': 'Basic ' + new Buffer( username + ':' + password ).toString( 'base64' )
-    }
-    
+
+    /*const headers = {
+        'Authorization': 'Basic ' + new Buffer( auth ).toString( 'base64' )
+    }*/
+    const auth = `${username}:${password}`
+
     const ok = ( res ) => res.statusCode == '200' || res.statusCode == '201'
     const http = https ? httpsModule : httpModule
 
-    // factory 
+    // factory
     const OnResp = ( cb ) => ( res ) => {
 
-        var data = ''
-        res.on( 'data', chunk => { data += chunk } ) //collect data
+        let data = ''
+        res.on( 'data', chunk => { data += chunk }) //collect data
         res.on( 'end', () => {
 
             let parsed;
-            if (data) try {
-                parsed = JSON.parse(data)
-            } catch (e) {
-                parsed = data;
+            if ( data ) try {
+                parsed = JSON.parse( data )
+            } catch ( e ) {
+                parsed = data
             }
 
-            if ( !ok(res) )
-                return cb( { code: res.statusCode, message: res.statusMessage }, parsed )
-
+            if ( !ok( res ) ){
+                const err = { code: res.statusCode, message: res.statusMessage }
+                return cb( err, parsed )
+            }
             cb( null, parsed )
 
-        } )
+        })
 
     }
 
-    
     const headServer = ( cb ) => {
-        
+
         http.request( 
-                    { method: 'HEAD', headers, host, port, path },
-                    res => cb( !ok( res ) ) //without payload
-                )
-                .on( 'error', cb )
-                .end()
+                { method: 'HEAD', host, port, path, auth },
+                res => cb( !ok( res ) ) //without payload
+            )
+            .on( 'error', cb )
+            .end()
 
     }
-    
+
     const getServer = ( cb ) => {
 
-        http.request( { headers, host, port, path }, OnResp( cb ) )
-                .on( 'error', cb ) 
-                .end()
+        http.request( { host, port, path, auth }, OnResp( cb ) )
+            .on( 'error', cb ) 
+            .end()
 
     }
 
     const getDocNames = ( opts, cb ) => {
-        
+
         opts = opts || {}
         let generated = +opts.generated || 0
         const url = `${path}${version}/${ns}/docnames?generated=${generated}`
 
-        http.request( { headers, host, port, 'path': url }, OnResp( cb ) )
-                .on( 'error', cb )
-                .end()
+        http.request( { host, port, 'path': url, auth }, OnResp( cb ) )
+            .on( 'error', cb )
+            .end()
 
     }
 
     const getDoc = ( doc, cb ) => {
 
         const url = `${path}${version}/${ns}/doc/${doc}`
-        http.request( { headers, host, port, 'path': url }, OnResp( cb ) )
-                .on( 'error', cb )
-                .end()
+        http.request( { host, port, 'path': url, auth }, OnResp( cb ) )
+            .on( 'error', cb )
+            .end()
 
     }
 
@@ -95,21 +97,24 @@ module.exports = ( conn ) => {
                 : ''
         }`
         const body = JSON.stringify(doc)
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(body, "utf8")
+        }
+
+        if ( params['If-None-Match'] ) {
+            headers['If-None-Match'] = params['If-None-Match']
+        }
+
         const req = http.request( {
-            method: 'PUT',
-            headers: Object.assign(
-                headers,
-                {
-                    'Content-Type': 'application/json',
-                    'Content-Length': Buffer.byteLength(body, "utf8")
-                },
-                params['If-None-Match'] ? { 'If-None-Match': params['If-None-Match'] } : undefined
-            ),
-            host, port,
-            path: url
+            method: 'PUT', host, port, path: url, headers, auth
         } , cb ? OnResp( cb ) : undefined )
-        if (cb)
+        
+        if (cb) {
             req.on( 'error', cb )
+        }
+            
         req.write( body )
         req.end()
 
@@ -126,12 +131,12 @@ module.exports = ( conn ) => {
         const body = JSON.stringify(docNames)
         const req = http.request( {
             method: 'POST',
-            headers: Object.assign(headers, {
+            host, port, path: url,
+            auth, 
+            headers: {
                 'Content-Type': 'application/json',
                 'Content-Length': Buffer.byteLength(body, "utf8")
-            }),
-            host, port,
-            path: url
+            }
         } , cb ? OnResp( cb ) : undefined )
         if (cb)
             req.on( 'error', cb )
@@ -151,12 +156,13 @@ module.exports = ( conn ) => {
         const body = JSON.stringify(docNames)
         const req = http.request( {
             method: 'DELETE',
-            headers: Object.assign(headers, {
+            host, port, path: url,
+            auth, 
+            headers: {
                 'Content-Type': 'application/json',
                 'Content-Length': Buffer.byteLength(body, "utf8")
-            }),
-            host, port,
-            path: url
+            }
+            
         } , cb ? OnResp( cb ) : undefined )
         if (cb)
             req.on( 'error', cb )
@@ -164,7 +170,7 @@ module.exports = ( conn ) => {
         req.end()
 
     }
-        
+
     return {
         compile,
         deleteDocs,
