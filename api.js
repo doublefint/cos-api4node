@@ -71,7 +71,9 @@ module.exports = ( conn ) => {
 
         opts = opts || {}
         let generated = +opts.generated || 0
-        const url = `${path}${version}/${ns}/docnames?generated=${generated}`
+        let filter = opts.filter || ''
+        let category = opts.category || '*'
+        const url = `${path}${version}/${ns}/docnames/${category}?generated=${generated}&filter=${filter}`
         const headers = getHeaders()
         http.request( { host, port, 'path': url, auth, agent, headers }, OnResp( cb ) )
             .on( 'error', cb )
