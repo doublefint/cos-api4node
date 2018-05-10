@@ -7,22 +7,29 @@ const httpsModule = require('https')
 module.exports = ( conn ) => {
 
     const { host, port, username, password, path, version, ns, https } = conn
-
-    /*const headers = {
-        'Authorization': 'Basic ' + new Buffer( auth ).toString( 'base64' )
-    }*/
-    const auth = `${username}:${password}`
-
-    const ok = ( res ) => res.statusCode == '200' || res.statusCode == '201'
     const http = https ? httpsModule : httpModule
+    const auth = `${username}:${password}`
+    const ok = res => ( res.statusCode === 200 ) || ( res.statusCode === 201 )
+    // by default cache without license have up to 25 connections 
+    const agent = new http.Agent({ keepAlive: true, maxSockets: 10 })
+    let cookies = []; //
+    const updateCookies = res => {
+        const resp_cookies = res.headers["set-cookie"] || []
+        if ( !cookies.length ) {
+            cookies = ( resp_cookies ).map( c => c ) //init session
+        } else if ( resp_cookies[0] != cookies[0] ){
+            cookies = ( resp_cookies ).map( c => c ) //update session
+        }
+    }
 
-    // factory
+    const getHeaders = () => ({ "Cookie": cookies })
+    // response handler factory
     const OnResp = ( cb ) => ( res ) => {
 
         let data = ''
-        res.on( 'data', chunk => { data += chunk }) //collect data
+        res.on( 'data', chunk => { data += chunk }) //accumulate all chunks
         res.on( 'end', () => {
-
+            updateCookies( res )
             let parsed;
             if ( data ) try {
                 parsed = JSON.parse( data )
@@ -42,9 +49,10 @@ module.exports = ( conn ) => {
 
     const headServer = ( cb ) => {
 
+        const headers = getHeaders()
         http.request( 
-                { method: 'HEAD', host, port, path, auth },
-                res => cb( !ok( res ) ) //without payload
+                { method: 'HEAD', host, port, path, auth, agent, headers },
+                res => updateCookies( res ) || cb( !ok( res ) ) //without payload
             )
             .on( 'error', cb )
             .end()
@@ -52,8 +60,8 @@ module.exports = ( conn ) => {
     }
 
     const getServer = ( cb ) => {
-
-        http.request( { host, port, path, auth }, OnResp( cb ) )
+        const headers = getHeaders()
+        http.request( { host, port, path, auth, agent, headers }, OnResp( cb ) )
             .on( 'error', cb ) 
             .end()
 
@@ -64,8 +72,8 @@ module.exports = ( conn ) => {
         opts = opts || {}
         let generated = +opts.generated || 0
         const url = `${path}${version}/${ns}/docnames?generated=${generated}`
-
-        http.request( { host, port, 'path': url, auth }, OnResp( cb ) )
+        const headers = getHeaders()
+        http.request( { host, port, 'path': url, auth, agent, headers }, OnResp( cb ) )
             .on( 'error', cb )
             .end()
 
@@ -74,7 +82,8 @@ module.exports = ( conn ) => {
     const getDoc = ( doc, cb ) => {
 
         const url = `${path}${version}/${ns}/doc/${doc}`
-        http.request( { host, port, 'path': url, auth }, OnResp( cb ) )
+        const headers = getHeaders()
+        http.request( { host, port, 'path': url, auth, agent, headers }, OnResp( cb ) )
             .on( 'error', cb )
             .end()
 
@@ -98,23 +107,23 @@ module.exports = ( conn ) => {
         }`
         const body = JSON.stringify(doc)
 
-        const headers = {
+        const headers = Object.assign( {}, getHeaders(), {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(body, "utf8")
-        }
+        })
 
         if ( params['If-None-Match'] ) {
             headers['If-None-Match'] = params['If-None-Match']
         }
 
         const req = http.request( {
-            method: 'PUT', host, port, path: url, headers, auth
-        } , cb ? OnResp( cb ) : undefined )
+            method: 'PUT', host, port, path: url, auth, agent, headers
+        } , cb ? OnResp( cb ) : updateCookies )
         
         if (cb) {
             req.on( 'error', cb )
         }
-            
+
         req.write( body )
         req.end()
 
@@ -129,17 +138,15 @@ module.exports = ( conn ) => {
 
         const url = `${path}${version}/${ns}/action/compile`
         const body = JSON.stringify(docNames)
+        const headers = Object.assign( {}, getHeaders(), {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(body, "utf8")
+        })
+
         const req = http.request( {
-            method: 'POST',
-            host, port, path: url,
-            auth, 
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(body, "utf8")
-            }
-        } , cb ? OnResp( cb ) : undefined )
-        if (cb)
-            req.on( 'error', cb )
+            method: 'POST', host, port, path: url, auth, agent, headers
+        } , cb ? OnResp( cb ) : updateCookies )
+        if (cb) req.on( 'error', cb )
         req.write( body )
         req.end()
 
@@ -154,18 +161,15 @@ module.exports = ( conn ) => {
 
         const url = `${path}${version}/${ns}/docs`
         const body = JSON.stringify(docNames)
+        const headers = Object.assign({}, getHeaders(), {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(body, "utf8")
+        })
+
         const req = http.request( {
-            method: 'DELETE',
-            host, port, path: url,
-            auth, 
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(body, "utf8")
-            }
-            
-        } , cb ? OnResp( cb ) : undefined )
-        if (cb)
-            req.on( 'error', cb )
+            method: 'DELETE', host, port, path: url, auth, agent, headers
+        } , cb ? OnResp( cb ) : updateCookies )
+        if (cb) req.on( 'error', cb )
         req.write( JSON.stringify(docNames) )
         req.end()
 
