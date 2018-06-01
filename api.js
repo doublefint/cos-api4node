@@ -1,6 +1,6 @@
-/** Atelier REST API wrapper 
+/** Atelier REST API wrapper
 * http://docs.intersystems.com/latest/csp/docbook/DocBook.UI.Page.cls?KEY=GSCF_ref#GSCF_C29114
-*/ 
+*/
 const httpModule = require('http')
 const httpsModule = require('https')
 
@@ -10,7 +10,7 @@ module.exports = ( conn ) => {
     const http = https ? httpsModule : httpModule
     const auth = `${username}:${password}`
     const ok = res => ( res.statusCode === 200 ) || ( res.statusCode === 201 )
-    // by default cache without license have up to 25 connections 
+    // by default cache without license have up to 25 connections
     const agent = new http.Agent({ keepAlive: true, maxSockets: 10 })
     let cookies = []; //
     const updateCookies = res => {
@@ -50,7 +50,7 @@ module.exports = ( conn ) => {
     const headServer = ( cb ) => {
 
         const headers = getHeaders()
-        http.request( 
+        http.request(
                 { method: 'HEAD', host, port, path, auth, agent, headers },
                 res => updateCookies( res ) || cb( !ok( res ) ) //without payload
             )
@@ -62,7 +62,7 @@ module.exports = ( conn ) => {
     const getServer = ( cb ) => {
         const headers = getHeaders()
         http.request( { host, port, path, auth, agent, headers }, OnResp( cb ) )
-            .on( 'error', cb ) 
+            .on( 'error', cb )
             .end()
 
     }
@@ -75,7 +75,7 @@ module.exports = ( conn ) => {
         let category = opts.category || '*'
         const url = `${path}${version}/${ns}/docnames/${category}?generated=${generated}&filter=${filter}`
         const headers = getHeaders()
-        http.request( { host, port, 'path': url, auth, agent, headers }, OnResp( cb ) )
+        http.request( { host, port, 'path': encodeURI(url), auth, agent, headers }, OnResp( cb ) )
             .on( 'error', cb )
             .end()
 
@@ -85,7 +85,7 @@ module.exports = ( conn ) => {
 
         const url = `${path}${version}/${ns}/doc/${doc}`
         const headers = getHeaders()
-        http.request( { host, port, 'path': url, auth, agent, headers }, OnResp( cb ) )
+        http.request( { host, port, 'path': encodeURI(url), auth, agent, headers }, OnResp( cb ) )
             .on( 'error', cb )
             .end()
 
@@ -102,8 +102,8 @@ module.exports = ( conn ) => {
             params = {};
         }
 
-        const url = `${path}${version}/${ns}/doc/${name}${ 
-            typeof params.ignoreConflict !== 'undefined' 
+        const url = `${path}${version}/${ns}/doc/${name}${
+            typeof params.ignoreConflict !== 'undefined'
                 ? '?ignoreConflict=' + +params.ignoreConflict
                 : ''
         }`
@@ -119,9 +119,9 @@ module.exports = ( conn ) => {
         }
 
         const req = http.request( {
-            method: 'PUT', host, port, path: url, auth, agent, headers
+            method: 'PUT', host, port, path: encodeURI(url), auth, agent, headers
         } , cb ? OnResp( cb ) : updateCookies )
-        
+
         if (cb) {
             req.on( 'error', cb )
         }
@@ -146,7 +146,7 @@ module.exports = ( conn ) => {
         })
 
         const req = http.request( {
-            method: 'POST', host, port, path: url, auth, agent, headers
+            method: 'POST', host, port, path: encodeURI(url), auth, agent, headers
         } , cb ? OnResp( cb ) : updateCookies )
         if (cb) req.on( 'error', cb )
         req.write( body )
@@ -169,7 +169,7 @@ module.exports = ( conn ) => {
         })
 
         const req = http.request( {
-            method: 'DELETE', host, port, path: url, auth, agent, headers
+            method: 'DELETE', host, port, path: encodeURI(url), auth, agent, headers
         } , cb ? OnResp( cb ) : updateCookies )
         if (cb) req.on( 'error', cb )
         req.write( JSON.stringify(docNames) )
