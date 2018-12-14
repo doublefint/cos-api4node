@@ -6,7 +6,7 @@ const httpsModule = require('https')
 
 module.exports = ( conn ) => {
 
-    const { host, port, username, password, path, version, ns, https } = conn
+    const { host, port, username, password, path, version, ns, https, compileflags } = conn
     const http = https ? httpsModule : httpModule
     const auth = `${username}:${password}`
     const ok = res => ( res.statusCode === 200 ) || ( res.statusCode === 201 )
@@ -138,7 +138,7 @@ module.exports = ( conn ) => {
         if (!(docNames instanceof Array))
             throw new Error(`Document names must be an array (${ docNames })`);
 
-        const url = `${path}${version}/${ns}/action/compile`
+        const url = `${path}${version}/${ns}/action/compile?flags=${compileflags}`
         const body = JSON.stringify(docNames)
         const headers = Object.assign( {}, getHeaders(), {
             'Content-Type': 'application/json',

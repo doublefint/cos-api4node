@@ -28,7 +28,8 @@ const api = api4node({
     ns: 'USER', 
     username: '_SYSTEM',
     password: 'SYS',
-    https: false
+    https: false,
+    compileflags: 'cuk'
 });
 
 // Get info about server
