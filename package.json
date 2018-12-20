@@ -1,6 +1,6 @@
 {
   "name": "cos-api4node",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "Atelier REST API wrapper",
   "repository": {
     "type": "git",
@@ -19,7 +19,10 @@
   ],
   "author": "doublefint@gmail.com",
   "contributors": [
-    { "name": "Nikita Savchenko", "email": "me@nikita.tk" }
+    {
+      "name": "Nikita Savchenko",
+      "email": "me@nikita.tk"
+    }
   ],
   "license": "MIT",
   "devDependencies": {
